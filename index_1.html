@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kushaal G J — GenAI Engineer</title>
+<meta name="description" content="Kushaal G J — Computer Science graduate in Bengaluru building retrieval-augmented generation pipelines, LLM assistants and computer vision systems." />
+<meta property="og:title" content="Kushaal G J — GenAI Engineer" />
+<meta property="og:description" content="I build systems that answer questions from documents. This page is one of them." />
+<meta property="og:type" content="website" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Source+Serif+4:opsz,wght@8..60,300..600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#E7EAEE;
+    --surface:#FFFFFF;
+    --ink:#0F141A;
+    --muted:#666F7B;
+    --line:#C9D0D8;
+    --hair:#EDF0F3;
+    --blue:#1F2ECC;
+    --mark:#F3E45F;
+    --wide:'Archivo', system-ui, sans-serif;
+    --serif:'Source Serif 4', Georgia, serif;
+    --mono:'IBM Plex Mono', ui-monospace, monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+  a{color:inherit}
+  p{margin:0 0 16px}
+  .mono{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+
+  /* nav */
+  nav{position:sticky;top:0;z-index:50;background:rgba(231,234,238,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;height:58px}
+  .brand{font-family:var(--wide);font-weight:800;font-stretch:120%;letter-spacing:-.01em;font-size:17px;text-decoration:none}
+  .nav-links{display:flex;gap:20px}
+  .nav-links a{color:var(--muted);text-decoration:none}
+  .nav-links a:hover{color:var(--blue)}
+  @media(max-width:860px){.nav-links{display:none}}
+
+  /* hero */
+  header{padding:64px 0 36px}
+  .status{display:inline-flex;align-items:center;gap:8px;color:var(--muted)}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--blue);box-shadow:0 0 0 4px rgba(31,46,204,.14)}
+  h1{font-family:var(--wide);font-weight:800;font-stretch:118%;font-size:clamp(52px,11.5vw,132px);line-height:.86;letter-spacing:-.035em;margin:18px 0 0}
+  .thesis{font-size:clamp(19px,2.4vw,26px);line-height:1.42;max-width:36ch;margin:22px 0 0}
+  .thesis em{font-style:normal;background:linear-gradient(transparent 62%,var(--mark) 62%)}
+
+  /* console */
+  .console{margin:40px 0 0;background:var(--surface);border:1px solid var(--line);border-radius:3px;box-shadow:0 1px 0 var(--line),0 18px 40px -32px rgba(15,20,26,.5)}
+  .console-head{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);color:var(--muted);flex-wrap:wrap}
+  .ask{display:flex;border-bottom:1px solid var(--line)}
+  .ask input{flex:1;min-width:0;border:0;outline:0;background:transparent;padding:20px 16px;font-family:var(--wide);font-weight:500;font-stretch:105%;font-size:clamp(16px,2.2vw,22px);color:var(--ink)}
+  .ask input::placeholder{color:#A6AEB8}
+  .ask button{border:0;background:var(--blue);color:#fff;cursor:pointer;padding:0 22px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+  .ask button:hover{background:#1626A6}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line)}
+  .chip{font-family:var(--mono);font-size:11.5px;padding:6px 11px;cursor:pointer;background:var(--paper);border:1px solid var(--line);border-radius:2px;color:var(--muted)}
+  .chip:hover{border-color:var(--blue);color:var(--blue)}
+  #results{padding:6px 0 8px;min-height:96px}
+  .hit{display:grid;grid-template-columns:64px 1fr;gap:16px;padding:16px;border-bottom:1px solid var(--hair)}
+  .hit:last-child{border-bottom:0}
+  .score{font-family:var(--mono);font-size:11px;color:var(--muted)}
+  .bar{height:3px;background:var(--paper);margin-top:6px}
+  .bar span{display:block;height:3px;background:var(--blue)}
+  .hit h4{margin:0 0 4px;font-family:var(--wide);font-weight:700;font-stretch:108%;font-size:15px}
+  .hit p{margin:0;font-size:15.5px;line-height:1.55}
+  .hit .src{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:8px}
+  mark{background:var(--mark);color:inherit;padding:0 1px}
+  .empty{padding:26px 16px;color:var(--muted);font-size:15.5px}
+  .console-foot{padding:11px 16px;border-top:1px solid var(--line);color:var(--muted);font-family:var(--mono);font-size:10.5px;letter-spacing:.05em}
+
+  /* marquee */
+  .ticker{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--surface);overflow:hidden;padding:12px 0;margin-top:56px}
+  .ticker-in{display:flex;gap:0;width:max-content;animation:slide 46s linear infinite}
+  .ticker span{font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:0 20px;white-space:nowrap}
+  .ticker span b{color:var(--blue);font-weight:400}
+  @keyframes slide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  /* sections */
+  section{padding:76px 0;border-top:1px solid var(--line)}
+  section:first-of-type{border-top:0}
+  .label{color:var(--muted);margin:0 0 24px}
+  h2{font-family:var(--wide);font-weight:800;font-stretch:114%;font-size:clamp(30px,5vw,46px);line-height:1;letter-spacing:-.025em;margin:0 0 28px}
+  .cols{display:grid;grid-template-columns:.85fr 1.15fr;gap:48px}
+  @media(max-width:860px){.cols{grid-template-columns:1fr;gap:28px}}
+  .lede{font-size:19px;line-height:1.55}
+
+  .facts{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:8px}
+  .fact{background:var(--paper);padding:16px}
+  .fact b{display:block;font-family:var(--wide);font-weight:800;font-stretch:112%;font-size:26px;letter-spacing:-.02em}
+  .fact span{color:var(--muted);font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase}
+
+  /* projects */
+  .proj{display:grid;grid-template-columns:190px 1fr;gap:32px;padding:34px 0;border-top:1px solid var(--line)}
+  .proj:first-of-type{border-top:0;padding-top:0}
+  @media(max-width:860px){.proj{grid-template-columns:1fr;gap:12px}}
+  .proj h3{font-family:var(--wide);font-weight:800;font-stretch:112%;font-size:26px;letter-spacing:-.02em;margin:0 0 10px;line-height:1.1}
+  .kind{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);margin:0 0 6px}
+  .when{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.06em;margin:0}
+  .stack{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+  .stack span{font-family:var(--mono);font-size:11px;padding:4px 9px;background:var(--surface);border:1px solid var(--line)}
+  .link{display:inline-block;margin-top:16px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);text-decoration:none;border-bottom:1px solid var(--blue);padding-bottom:2px}
+  .flow{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;align-items:center}
+  .flow i{font-style:normal;font-family:var(--mono);font-size:11px;background:var(--surface);border:1px solid var(--line);padding:5px 10px}
+  .flow u{text-decoration:none;color:var(--muted);font-family:var(--mono);font-size:11px}
+
+  /* experience */
+  .role{display:grid;grid-template-columns:190px 1fr;gap:32px;padding:28px 0;border-top:1px solid var(--line)}
+  .role:first-of-type{border-top:0;padding-top:0}
+  @media(max-width:860px){.role{grid-template-columns:1fr;gap:10px}}
+  .role h3{font-family:var(--wide);font-weight:700;font-stretch:108%;font-size:21px;margin:0 0 4px}
+  .org{color:var(--muted);margin:0 0 12px;font-size:16px}
+  ul{margin:0;padding-left:18px}
+  li{margin-bottom:8px}
+
+  /* toolkit */
+  .kit{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+  @media(max-width:860px){.kit{grid-template-columns:1fr}}
+  .kit div{background:var(--paper);padding:20px}
+  .kit h4{margin:0 0 8px;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--blue)}
+  .kit p{margin:0;font-size:16px}
+
+  /* education */
+  .edu{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+  @media(max-width:860px){.edu{grid-template-columns:1fr;gap:24px}}
+  .card{background:var(--surface);border:1px solid var(--line);padding:24px}
+  .card h3{font-family:var(--wide);font-weight:700;font-stretch:108%;font-size:20px;margin:0 0 6px}
+  .card ul{padding-left:18px;margin-top:12px}
+
+  /* offline */
+  .off{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  @media(max-width:860px){.off{grid-template-columns:1fr}}
+  .off h4{font-family:var(--wide);font-weight:700;font-stretch:108%;font-size:18px;margin:0 0 6px}
+  .off p{font-size:16px;margin:0}
+
+  /* contact */
+  .contact a.big{display:flex;justify-content:space-between;align-items:baseline;gap:16px;font-family:var(--wide);font-weight:800;font-stretch:114%;font-size:clamp(24px,4.6vw,44px);letter-spacing:-.03em;text-decoration:none;padding:18px 0;border-top:1px solid var(--line)}
+  .contact a.big:last-of-type{border-bottom:1px solid var(--line)}
+  .contact a.big:hover{color:var(--blue)}
+  .contact a.big small{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:none;color:var(--muted);font-weight:400;text-align:right;overflow-wrap:anywhere}
+  .contact a.big:hover small{color:var(--blue)}
+  footer{padding:34px 0 60px;color:var(--muted);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+  .reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
+  .reveal.in{opacity:1;transform:none}
+  :focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+  @media(prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .reveal{opacity:1;transform:none;transition:none}
+    .ticker-in{animation:none}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-in">
+    <a class="brand" href="#top">Kushaal G J</a>
+    <div class="nav-links mono">
+      <a href="#about">About</a>
+      <a href="#projects">Projects</a>
+      <a href="#experience">Experience</a>
+      <a href="#toolkit">Toolkit</a>
+      <a href="#education">Education</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<header id="top">
+  <div class="wrap">
+    <div class="status mono"><i class="dot"></i> Bengaluru · Open to GenAI, Python &amp; Data roles</div>
+    <h1>Kushaal G J</h1>
+    <p class="thesis">I build systems that answer questions from documents. <em>This page is one of them.</em></p>
+
+    <div class="console">
+      <div class="console-head mono">
+        <span>Ask this page</span>
+        <span id="corpus-size">—</span>
+      </div>
+      <div class="ask">
+        <input id="q" type="text" autocomplete="off" placeholder="What has he built with RAG?" aria-label="Ask a question about Kushaal" />
+        <button id="go">Retrieve</button>
+      </div>
+      <div class="chips" id="chips"></div>
+      <div id="results"></div>
+      <div class="console-foot">Keyword-scored retrieval running in your browser. No server, no API call, no LLM.</div>
+    </div>
+  </div>
+</header>
+
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-in" id="ticker"></div>
+</div>
+
+<section id="about" class="reveal">
+  <div class="wrap">
+    <p class="label mono">About</p>
+    <div class="cols">
+      <div>
+        <h2>Fresher on paper.<br>Not in practice.</h2>
+        <div class="facts">
+          <div class="fact"><b>2026</b><span>B.E. CSE, VTU</span></div>
+          <div class="fact"><b>7.8</b><span>CGPA</span></div>
+          <div class="fact"><b>2</b><span>Internships</span></div>
+          <div class="fact"><b>4</b><span>Projects shipped</span></div>
+        </div>
+      </div>
+      <div>
+        <p class="lede">Computer Science Engineering graduate from Jyothy Institute of Technology, Bengaluru. I build generative AI applications — retrieval pipelines and LLM-powered assistants — alongside computer vision systems that have to work in real time.</p>
+        <p>Most of my work is retrieval-augmented: take a corpus nobody wants to read — HR policy documents, SEBI circulars — and turn it into something a person can ask a question and get a grounded, source-backed answer from. The model call is the easy part. The work is in chunking, retrieval quality, and knowing what to do when the wrong context comes back.</p>
+        <p>I write pipelines config-driven, so serving a new domain is a configuration change rather than a second codebase. PolicyPilot and FundLens run on the same engine — that was the point of building both.</p>
+        <p>The other half of what I do is vision: pose estimation, joint-angle maths, and feedback loops fast enough to correct someone mid-rep.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="projects" class="reveal">
+  <div class="wrap">
+    <p class="label mono">Projects</p>
+    <h2>Things that run</h2>
+
+    <div class="proj">
+      <div>
+        <p class="kind">RAG · Featured</p>
+        <p class="when">Config-driven engine</p>
+      </div>
+      <div>
+        <h3>PolicyPilot — HR Policy Assistant</h3>
+        <p>A retrieval-augmented assistant that answers HR policy questions by grounding every LLM response in the company's own policy documents, so employees stop digging through PDFs to find out how many leave days they have left.</p>
+        <p>The retrieval and generation pipeline is built as a config-driven engine rather than hardcoded to one dataset — the whole system was designed from the start to be pointed at a different document domain without a rewrite.</p>
+        <div class="stack"><span>Python</span><span>RAG</span><span>LLM APIs</span><span>Vector search</span><span>Prompt engineering</span></div>
+        <!-- EDIT: replace # with the GitHub repo link -->
+        <a class="link" href="#">View code</a>
+      </div>
+    </div>
+
+    <div class="proj">
+      <div>
+        <p class="kind">RAG · Finance</p>
+        <p class="when">Same engine, new domain</p>
+      </div>
+      <div>
+        <h3>FundLens — SEBI &amp; Mutual Fund Q&amp;A</h3>
+        <p>A question-answering system over SEBI regulations and mutual fund documentation, returning source-grounded answers to investor questions instead of confident guesses.</p>
+        <p>It shares its core retrieval and generation engine with PolicyPilot through the same configurable pipeline — the proof that the architecture was genuinely reusable and not a one-off script wearing a second name.</p>
+        <div class="stack"><span>Python</span><span>RAG</span><span>LLM APIs</span><span>Document chunking</span></div>
+        <a class="link" href="#">View code</a>
+      </div>
+    </div>
+
+    <div class="proj">
+      <div>
+        <p class="kind">Computer Vision · Real time</p>
+        <p class="when">Modular pipeline</p>
+      </div>
+      <div>
+        <h3>AI-Powered Fitness Posture Correction</h3>
+        <p>A real-time system that watches you exercise and tells you when your form is wrong. Live pose estimation detects body landmarks, joint angles are computed frame by frame, and corrective feedback comes back through voice and on-screen cues — fast enough to fix a rep while it's happening. Incorrect form dropped measurably in simulated testing.</p>
+        <div class="flow">
+          <i>Video capture</i><u>→</u><i>Pose detection</i><u>→</u><i>Angle computation</i><u>→</u><i>Posture classification</i>
+        </div>
+        <div class="stack"><span>Python</span><span>OpenCV</span><span>MediaPipe</span><span>NumPy</span></div>
+        <a class="link" href="#">View code</a>
+      </div>
+    </div>
+
+    <div class="proj">
+      <div>
+        <p class="kind">Data · Analytics</p>
+        <p class="when">10,000+ records</p>
+      </div>
+      <div>
+        <h3>Instagram User Analytics</h3>
+        <p>Analysis of over 10,000 user interaction records to find the patterns behind engagement, posting frequency and follower growth — then an interactive Power BI dashboard tracking reach, likes and comments so the findings stayed usable after the analysis ended. The recommendations projected a 12–15% lift in engagement.</p>
+        <div class="stack"><span>Python</span><span>SQL</span><span>Power BI</span><span>Pandas</span></div>
+        <a class="link" href="#">View code</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="experience" class="reveal">
+  <div class="wrap">
+    <p class="label mono">Experience</p>
+    <h2>Where I've worked</h2>
+
+    <div class="role">
+      <div>
+        <p class="kind">Full Stack</p>
+        <p class="when">Feb 1 — May 15, 2026</p>
+      </div>
+      <div>
+        <h3>Full Stack Development Intern</h3>
+        <p class="org">Suprmentr</p>
+        <ul>
+          <li>Built a web-based AI Quiz Generator in React that turns user-provided content into dynamic quizzes.</li>
+          <li>Developed reusable, component-based UI modules and integrated AI-generated content into the quiz workflow.</li>
+          <li>Worked across multiple agile sprints, contributing to frontend development and feature testing in a collaborative team.</li>
+        </ul>
+        <div class="stack"><span>React</span><span>JavaScript</span><span>HTML/CSS</span><span>Agile</span></div>
+      </div>
+    </div>
+
+    <div class="role">
+      <div>
+        <p class="kind">Machine Learning</p>
+        <p class="when">2025</p>
+      </div>
+      <div>
+        <h3>Machine Learning Intern</h3>
+        <p class="org">Varcons Technologies</p>
+        <ul>
+          <li>Led a team building an AI-based wallpaper generation tool, owning technical direction from concept through delivery.</li>
+          <li>Coordinated model integration and the output pipeline, taking the project from prototype to a demoable end product.</li>
+        </ul>
+        <div class="stack"><span>Python</span><span>Generative models</span><span>Team lead</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="toolkit" class="reveal">
+  <div class="wrap">
+    <p class="label mono">Toolkit</p>
+    <h2>What I reach for</h2>
+    <div class="kit">
+      <div><h4>Generative AI</h4><p>RAG pipeline design, LLM APIs (Claude, OpenAI), prompt engineering, vector search</p></div>
+      <div><h4>Languages</h4><p>Python, SQL, JavaScript, HTML/CSS</p></div>
+      <div><h4>ML &amp; Computer Vision</h4><p>OpenCV, MediaPipe, Scikit-learn, real-time pose estimation</p></div>
+      <div><h4>Data</h4><p>Pandas, NumPy, Matplotlib, Power BI, Excel (macros, pivot tables), Google Sheets</p></div>
+      <div><h4>Databases</h4><p>MySQL, SQL query design</p></div>
+      <div><h4>Tools &amp; OS</h4><p>Git, GitHub, Jupyter Notebook, Google Colab, Linux (Ubuntu)</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="education" class="reveal">
+  <div class="wrap">
+    <p class="label mono">Education &amp; Certifications</p>
+    <h2>The paperwork</h2>
+    <div class="edu">
+      <div class="card">
+        <p class="kind">2026 · VTU</p>
+        <h3>B.E. Computer Science and Engineering</h3>
+        <p class="org">Jyothy Institute of Technology, Bengaluru</p>
+        <p style="margin:0"><b>CGPA 7.8</b> · Graduated June 2026</p>
+      </div>
+      <div class="card">
+        <p class="kind">IBM SkillsBuild</p>
+        <h3>Certifications</h3>
+        <ul>
+          <li>AI Fundamentals</li>
+          <li>Generative AI for Everyone</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="offline" class="reveal">
+  <div class="wrap">
+    <p class="label mono">Off the clock</p>
+    <h2>The other inputs</h2>
+    <div class="off">
+      <div>
+        <h4>Training</h4>
+        <p>Gym, running, and karate — currently at Purple 2. The posture correction project exists because I spent enough time watching people get form wrong, including me.</p>
+      </div>
+      <div>
+        <h4>Markets</h4>
+        <p>Indian equities and mutual funds, tracked closely enough that building a Q&amp;A system over SEBI documentation felt like scratching my own itch.</p>
+      </div>
+      <div>
+        <h4>Guitar</h4>
+        <p>Slow, unglamorous, daily practice on something with no shortcut. Same reason I rebuild projects by hand after the first pass.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="contact reveal">
+  <div class="wrap">
+    <p class="label mono">Contact</p>
+    <h2>Let's talk</h2>
+    <p class="lede" style="max-width:48ch;margin-bottom:28px">Open to GenAI engineer, Python developer and data analyst roles in Bengaluru. Happy to walk through the architecture behind anything above.</p>
+    <a class="big" href="mailto:kushaal.gj@gmail.com">Email <small>kushaal.gj@gmail.com</small></a>
+    <a class="big" href="https://www.linkedin.com/in/kushaal-g-j-5a0159257" target="_blank" rel="noopener">LinkedIn <small>kushaal-g-j</small></a>
+    <a class="big" href="https://github.com/kushaalGJ" target="_blank" rel="noopener">GitHub <small>kushaalGJ</small></a>
+    <a class="big" href="tel:+917019934401">Phone <small>+91 70199 34401</small></a>
+    <a class="big" href="Kushaal-G-J-Resume.pdf" target="_blank" rel="noopener">Résumé <small>PDF</small></a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap mono" style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;width:100%">
+    <span>Kushaal G J · Bengaluru, IN</span>
+    <span>Built by hand · 2026</span>
+  </div>
+</footer>
+
+<script>
+/* ---------- the page's own knowledge base ---------- */
+const CORPUS = [
+  {t:"PolicyPilot — RAG-based HR policy assistant", s:"Projects",
+   x:"A retrieval-augmented generation assistant that answers HR policy questions by grounding LLM responses in company policy documents, cutting out manual policy lookup. The retrieval and generation pipeline is built as a config-driven engine, designed to be reused across document domains rather than hardcoded to one dataset.",
+   g:"rag retrieval augmented generation llm hr policy assistant python vector search prompt engineering config pipeline chatbot documents grounding claude openai genai"},
+  {t:"FundLens — SEBI and mutual fund Q&A assistant", s:"Projects",
+   x:"A RAG-based question-answering system over SEBI regulations and mutual fund documentation, answering investor questions with source-grounded responses. It shares its core retrieval and generation engine with PolicyPilot through the same configurable pipeline, demonstrating reusable system design over one-off scripts.",
+   g:"rag finance sebi mutual fund investing regulations qa question answering llm python reusable architecture chunking documents genai"},
+  {t:"AI-powered fitness posture correction system", s:"Projects",
+   x:"A real-time computer vision system that detects body posture using live pose estimation and joint angle computation, delivering instant corrective feedback through voice and on-screen cues. Built as a modular pipeline: video capture, pose detection, angle computation, posture classification.",
+   g:"computer vision opencv mediapipe numpy pose estimation real time fitness gym exercise posture landmarks python cv ml modular pipeline"},
+  {t:"Instagram user analytics", s:"Projects",
+   x:"Analysis of over 10,000 user interaction records to uncover patterns in engagement, posting frequency and follower growth, with an interactive Power BI dashboard tracking reach, likes and comments. Insights projected a 12 to 15 percent improvement in engagement.",
+   g:"data analyst analytics power bi dashboard sql python pandas engagement social media instagram reporting visualisation business insights excel"},
+  {t:"Full Stack Development Intern, Suprmentr", s:"Experience",
+   x:"February to May 2026. Built a web-based AI Quiz Generator in React that turns user-provided content into dynamic quizzes, developed reusable component-based UI modules, and worked across multiple agile sprints contributing to frontend development and feature testing.",
+   g:"internship experience full stack fullstack frontend react javascript html css web development agile sprints team suprmentr quiz ui components testing 2026"},
+  {t:"Machine Learning Intern, Varcons Technologies", s:"Experience",
+   x:"2025. Led a team building an AI-based wallpaper generation tool, owning technical direction from concept through delivery, and coordinated model integration and the output pipeline from prototype to a demoable end product.",
+   g:"internship experience machine learning ml team lead leadership varcons generative image wallpaper python model integration 2025 delivery"},
+  {t:"Education", s:"Background",
+   x:"B.E. in Computer Science and Engineering from Jyothy Institute of Technology, VTU, Bengaluru. CGPA 7.8, graduated June 2026.",
+   g:"education degree college university btech be cse computer science engineering jyothy vtu bengaluru bangalore cgpa gpa marks graduate 2026 fresher qualification"},
+  {t:"Certifications", s:"Background",
+   x:"AI Fundamentals and Generative AI for Everyone, both from IBM SkillsBuild.",
+   g:"certification certified ibm skillsbuild ai fundamentals generative course credentials training"},
+  {t:"Generative AI skills", s:"Toolkit",
+   x:"RAG pipeline design, LLM APIs including Claude and OpenAI, prompt engineering, vector search, and document chunking strategy.",
+   g:"genai generative ai llm rag retrieval vector search embeddings prompt engineering claude openai api agents chatbot langchain pipeline design"},
+  {t:"Languages and backend skills", s:"Toolkit",
+   x:"Python with Pandas, NumPy and Matplotlib, plus SQL, JavaScript and HTML/CSS. MySQL for databases.",
+   g:"python sql javascript html css mysql database backend programming languages pandas numpy matplotlib coding development"},
+  {t:"Machine learning and computer vision skills", s:"Toolkit",
+   x:"OpenCV, MediaPipe, Scikit-learn and real-time pose estimation.",
+   g:"machine learning ml computer vision cv opencv mediapipe scikit learn sklearn pose estimation image processing models deep learning"},
+  {t:"Data and analytics skills", s:"Toolkit",
+   x:"Power BI dashboards, Excel with macros and pivot tables, Google Sheets, SQL analysis, and Pandas for data handling.",
+   g:"data analyst analytics power bi dashboard excel macros pivot tables google sheets sql reporting business intelligence pandas visualisation"},
+  {t:"Tools and environment", s:"Toolkit",
+   x:"Git and GitHub for version control, Jupyter Notebook and Google Colab for experimentation, and Linux on Ubuntu.",
+   g:"tools git github version control jupyter notebook colab linux ubuntu os workflow environment"},
+  {t:"What I'm looking for", s:"Contact",
+   x:"Open to GenAI engineer, Python developer and data analyst roles in Bengaluru. Reachable at kushaal.gj@gmail.com or on LinkedIn.",
+   g:"hiring job role opportunity open work available contact email linkedin phone bengaluru bangalore location join notice period recruiter apply"},
+  {t:"How I work", s:"Background",
+   x:"I build pipelines config-driven so the same engine serves a new domain, and I rebuild each project by hand after the first pass so I can defend every architectural decision rather than just ship it.",
+   g:"approach philosophy process learning interview defend understanding depth rebuild practice method engineering discipline reusable design"},
+  {t:"Outside work", s:"Background",
+   x:"Gym, running and karate at Purple 2 belt, guitar practice, and following Indian equity markets and mutual funds closely.",
+   g:"hobbies interests personal outside fitness gym running karate martial arts guitar music stocks equity markets investing mutual funds sports"}
+];
+
+const STOP = new Set("a an and are as at be by can did do does for from get has have he her him his how i in is it its me my of on or she that the their them there they this to was were what when where which who whom why will with you your".split(" "));
+
+const $ = s => document.querySelector(s);
+const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const rx = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+$('#corpus-size').textContent = CORPUS.length + " chunks indexed";
+
+function terms(q){
+  return q.toLowerCase().split(/[^a-z0-9+#.-]+/)
+    .map(w => w.replace(/^[.-]+|[.-]+$/g,''))
+    .filter(w => w.length > 1 && !STOP.has(w));
+}
+
+function score(chunk, ts){
+  let sc = 0;
+  const title = chunk.t.toLowerCase(), body = chunk.x.toLowerCase(), tags = chunk.g;
+  for (const t of ts){
+    const r = new RegExp(rx(t), 'g');
+    const n = (body.match(r) || []).length;
+    if (n) sc += 1 + (n - 1) * 0.4;
+    if (title.includes(t)) sc += 3;
+    if (tags.includes(t)) sc += 2.4;
+    if (t.length >= 4){
+      const stem = t.slice(0, Math.max(4, t.length - 2));
+      if (body.includes(stem)) sc += 0.5;
+      if (tags.includes(stem)) sc += 0.8;
+    }
+  }
+  return sc;
+}
+
+function highlight(text, ts){
+  let out = esc(text);
+  ts.filter(t => t.length > 2).forEach(t => {
+    out = out.replace(new RegExp('(' + rx(t) + ')', 'gi'), '<mark>$1</mark>');
+  });
+  return out;
+}
+
+function retrieve(q){
+  const box = $('#results');
+  const ts = terms(q);
+  if (!ts.length){
+    box.innerHTML = '<p class="empty">Type a question — or pick one of the prompts above.</p>';
+    return;
+  }
+  const hits = CORPUS.map(c => ({c, v: score(c, ts)}))
+                     .filter(h => h.v > 0)
+                     .sort((a,b) => b.v - a.v)
+                     .slice(0, 3);
+  if (!hits.length){
+    box.innerHTML = '<p class="empty">Nothing in the index matched that. Try <b>RAG</b>, <b>internship</b>, <b>Power BI</b>, or <b>OpenCV</b>.</p>';
+    return;
+  }
+  const top = hits[0].v;
+  box.innerHTML = hits.map((h, i) => {
+    const pct = Math.round(h.v / top * 100);
+    return `<div class="hit">
+      <div>
+        <div class="score">${pct}%</div>
+        <div class="bar"><span style="width:${pct}%"></span></div>
+        <div class="score" style="margin-top:8px">${i === 0 ? 'top' : '#' + (i + 1)}</div>
+      </div>
+      <div>
+        <h4>${esc(h.c.t)}</h4>
+        <p>${highlight(h.c.x, ts)}</p>
+        <div class="src">${esc(h.c.s)}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+const PROMPTS = [
+  "What has he built with RAG?",
+  "Does he know computer vision?",
+  "Tell me about his internships",
+  "Can he do data analysis?",
+  "What did he study?",
+  "Is he open to work?"
+];
+$('#chips').innerHTML = PROMPTS.map(p => `<button class="chip">${esc(p)}</button>`).join('');
+$('#chips').addEventListener('click', e => {
+  if (!e.target.classList.contains('chip')) return;
+  $('#q').value = e.target.textContent;
+  retrieve(e.target.textContent);
+});
+$('#go').addEventListener('click', () => retrieve($('#q').value));
+$('#q').addEventListener('keydown', e => { if (e.key === 'Enter') retrieve($('#q').value); });
+retrieve("retrieval augmented generation projects");
+
+/* ticker */
+const SKILLS = ["Python","RAG pipeline design","LLM APIs","Prompt engineering","Vector search","OpenCV","MediaPipe","Scikit-learn","Pose estimation","SQL","MySQL","Power BI","Pandas","NumPy","Matplotlib","React","JavaScript","Git","Linux"];
+const row = SKILLS.map(s => `<span>${s} <b>◆</b></span>`).join('');
+document.getElementById('ticker').innerHTML = row + row;
+
+/* scroll reveal */
+const io = new IntersectionObserver(es => {
+  es.forEach(e => { if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+}, {threshold:.1});
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+</body>
+</html>
